@@ -1,3 +1,4 @@
-fastapi[all]
+fastapi[all]~=0.70.1
 psycopg2
-sqlalchemy
+sqlalchemy~=1.4.29
+pydantic~=1.9.0
