@@ -2,7 +2,7 @@ from database.alchemy_orm import get_db
 from models.user import User as userModel
 from utils.encrypt import validate
 from utils.oauth2 import create_token, validate_token
-from schemas.token import TokenData as Token_Data_Schema
+from schemas.token import Token, TokenData as Token_Data_Schema
 
 from os import getenv
 
@@ -19,7 +19,7 @@ TOKEN_URL = getenv("TOKEN_URL")
 oauth2_schema = OAuth2PasswordBearer(tokenUrl=TOKEN_URL)
 
 
-@router.post("/login")
+@router.post("/login", response_model=Token)
 def login(user_login: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = db.query(userModel).filter(user_login.username == userModel.email).first()
 
