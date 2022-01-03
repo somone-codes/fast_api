@@ -1,6 +1,8 @@
 from database.alchemy_orm import get_db
 from schemas import post as post_schema
 from models import post as post_model
+from .authentication import validate_current_user
+
 from typing import List
 
 from fastapi import Response, status, HTTPException, Depends, APIRouter
@@ -13,7 +15,7 @@ router = APIRouter(
 
 
 @router.get("/", response_model=List[post_schema.PostOut])
-def get_posts(db: Session = Depends(get_db)):
+def get_posts(db: Session = Depends(get_db), validate_user: int = Depends(validate_current_user)):
     posts = db.query(post_model.Post).all()
     return posts
 
@@ -63,7 +65,7 @@ def update_post(id: int, updated_post: post_schema.PostCreate, db: Session = Dep
 
     post = post_query.first()
 
-    if post == None:
+    if post is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"post with id: {id} does not exist")
 
