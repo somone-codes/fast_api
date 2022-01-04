@@ -34,8 +34,6 @@ def validate_token(token,
         return payload
     except jwt.JWTError:
         raise invalid_creds_error
-    else:
-        return True
 
 
 def _validate_payload(payload: dict, keys: List[str]):

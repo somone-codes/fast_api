@@ -1,3 +1,4 @@
+from routers.authentication import validate_current_user
 from schemas import user as user_schema
 from models import user as user_model
 from database.alchemy_orm import get_db
@@ -15,7 +16,7 @@ router = APIRouter(
 
 
 @router.get("/", response_model=List[user_schema.UserOut])
-def get_users(db: Session = Depends(get_db)):
+def get_users(db: Session = Depends(get_db), user: user_model = Depends(validate_current_user)):
     users = db.query(user_model.User).all()
 
     if not users:
@@ -26,7 +27,7 @@ def get_users(db: Session = Depends(get_db)):
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=user_schema.UserOut)
-def create_users(user: user_schema.UserCreate, db: Session = Depends(get_db)):
+def create_users(user: user_schema.UserCreate, db: Session = Depends(get_db), logged_user: user_model = Depends(validate_current_user)):
     user.password = encrypt(user.password)
 
     new_user = user_model.User(**user.dict())
@@ -38,7 +39,7 @@ def create_users(user: user_schema.UserCreate, db: Session = Depends(get_db)):
 
 
 @router.get('/{id}', response_model=user_schema.UserOut)
-def get_user(id: int, db: Session = Depends(get_db), ):
+def get_user(id: int, db: Session = Depends(get_db), user: user_model = Depends(validate_current_user)):
     user = db.query(user_model.User).filter(user_model.User.id == id).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,

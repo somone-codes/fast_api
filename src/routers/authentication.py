@@ -33,9 +33,17 @@ def login(user_login: OAuth2PasswordRequestForm = Depends(), db: Session = Depen
     return {"access_token": token, "token_type": "bearer"}
 
 
-def validate_current_user(token: str = Depends(oauth2_schema)):
+def validate_current_user(token: str = Depends(oauth2_schema),  db: Session = Depends(get_db)) -> int:
     auth_failure_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                                            detail="Credential validation failed.",
                                            headers={"WWW-Authenticate": "bearer"})
 
-    return validate_token(token, ["user_id"], schema=Token_Data_Schema, invalid_creds_error=auth_failure_exception)
+    token = validate_token(token, ["user_id"], schema=Token_Data_Schema, invalid_creds_error=auth_failure_exception)
+
+    user = db.query(userModel).filter(userModel.id == token.user_id).first()
+
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials, user not found.")
+
+    return user
+

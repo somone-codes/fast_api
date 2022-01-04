@@ -1,6 +1,6 @@
 from database.alchemy_orm import get_db
 from schemas import post as post_schema
-from models import post as post_model
+from models import post as post_model, user as user_model
 from .authentication import validate_current_user
 
 from typing import List
@@ -15,13 +15,13 @@ router = APIRouter(
 
 
 @router.get("/", response_model=List[post_schema.PostOut])
-def get_posts(db: Session = Depends(get_db), validate_user: int = Depends(validate_current_user)):
+def get_posts(db: Session = Depends(get_db), user: user_model = Depends(validate_current_user)):
     posts = db.query(post_model.Post).all()
     return posts
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=post_schema.Post)
-def create_posts(post: post_schema.PostCreate, db: Session = Depends(get_db)):
+def create_posts(post: post_schema.PostCreate, db: Session = Depends(get_db), user: user_model = Depends(validate_current_user)):
     new_post = post_model.Post(**post.dict())
     db.add(new_post)
     db.commit()
@@ -31,7 +31,7 @@ def create_posts(post: post_schema.PostCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/{id}", response_model=post_schema.PostOut)
-def get_post(id: int, db: Session = Depends(get_db)):
+def get_post(id: int, db: Session = Depends(get_db), user: user_model = Depends(validate_current_user)):
     post_query = db.query(post_model.Post).filter(post_model.Post.id == id)
 
     post = post_query.first()
@@ -44,7 +44,7 @@ def get_post(id: int, db: Session = Depends(get_db)):
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id: int, db: Session = Depends(get_db)):
+def delete_post(id: int, db: Session = Depends(get_db), user: user_model = Depends(validate_current_user)):
     post_query = db.query(post_model.Post).filter(post_model.Post.id == id)
 
     post = post_query.first()
@@ -60,7 +60,7 @@ def delete_post(id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/{id}", response_model=post_schema.Post)
-def update_post(id: int, updated_post: post_schema.PostCreate, db: Session = Depends(get_db)):
+def update_post(id: int, updated_post: post_schema.PostCreate, db: Session = Depends(get_db), user: user_model = Depends(validate_current_user)):
     post_query = db.query(post_model.Post).filter(post_model.Post.id == id)
 
     post = post_query.first()
