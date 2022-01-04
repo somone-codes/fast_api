@@ -14,6 +14,12 @@ router = APIRouter(
 )
 
 
+@router.get("/all", response_model=List[post_schema.PostWithOwner])
+def get_posts(db: Session = Depends(get_db)):
+    posts = db.query(post_model.Post).all()
+    return posts
+
+
 @router.get("/", response_model=List[post_schema.Post])
 def get_posts(db: Session = Depends(get_db), user: user_model = Depends(validate_current_user)):
     posts = db.query(post_model.Post).filter(post_model.Post.owner_id == user.id).all()
