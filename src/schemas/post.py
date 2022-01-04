@@ -1,5 +1,8 @@
+from .user import UserOut
+
 from datetime import datetime
 from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -21,3 +24,7 @@ class Post(PostBase):
 
     class Config:
         orm_mode = True
+
+
+class PostWithOwner(Post):
+    owner: UserOut
