@@ -27,7 +27,8 @@ def get_users(db: Session = Depends(get_db), user: user_model = Depends(validate
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=user_schema.UserOut)
-def create_users(user: user_schema.UserCreate, db: Session = Depends(get_db), logged_user: user_model = Depends(validate_current_user)):
+def create_users(user: user_schema.UserCreate, db: Session = Depends(get_db),
+                 logged_user: user_model = Depends(validate_current_user)):
     user.password = encrypt(user.password)
 
     new_user = user_model.User(**user.dict())
@@ -46,3 +47,17 @@ def get_user(id: int, db: Session = Depends(get_db), user: user_model = Depends(
                             detail=f"User with id: {id} does not exist")
 
     return user
+
+
+@router.delete('/{id}')
+def get_user(id: int, db: Session = Depends(get_db), logged_user: user_model = Depends(validate_current_user)):
+    user_query = db.query(user_model.User).filter(user_model.User.id == id)
+    user = user_query.first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"User with id: {id} does not exist")
+    if user.id != logged_user.id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Not authorised to perform this action.")
+    user_query.delete(synchronize_session=False)
+    db.commit()
