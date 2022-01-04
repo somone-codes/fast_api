@@ -14,7 +14,7 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=List[post_schema.PostOut])
+@router.get("/", response_model=List[post_schema.Post])
 def get_posts(db: Session = Depends(get_db), user: user_model = Depends(validate_current_user)):
     posts = db.query(post_model.Post).all()
     return posts
@@ -22,7 +22,7 @@ def get_posts(db: Session = Depends(get_db), user: user_model = Depends(validate
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=post_schema.Post)
 def create_posts(post: post_schema.PostCreate, db: Session = Depends(get_db), user: user_model = Depends(validate_current_user)):
-    new_post = post_model.Post(**post.dict())
+    new_post = post_model.Post(owner_id=user.id, **post.dict())
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
@@ -30,7 +30,7 @@ def create_posts(post: post_schema.PostCreate, db: Session = Depends(get_db), us
     return new_post
 
 
-@router.get("/{id}", response_model=post_schema.PostOut)
+@router.get("/{id}", response_model=post_schema.Post)
 def get_post(id: int, db: Session = Depends(get_db), user: user_model = Depends(validate_current_user)):
     post_query = db.query(post_model.Post).filter(post_model.Post.id == id)
 
