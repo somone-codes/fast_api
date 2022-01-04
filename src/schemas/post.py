@@ -17,12 +17,7 @@ class Post(PostBase):
     id: int
     created_at: Optional[datetime]
     published: Optional[bool] = True
-
-    class Config:
-        orm_mode = True
-
-
-class PostOut(PostBase):
+    owner_id: int
 
     class Config:
         orm_mode = True
