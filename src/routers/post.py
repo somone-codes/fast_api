@@ -21,8 +21,18 @@ def get_posts(db: Session = Depends(get_db)):
 
 
 @router.get("/", response_model=List[post_schema.Post])
-def get_posts(db: Session = Depends(get_db), user: user_model = Depends(validate_current_user)):
-    posts = db.query(post_model.Post).filter(post_model.Post.owner_id == user.id).all()
+def get_posts(db: Session = Depends(get_db),
+              user: user_model = Depends(validate_current_user),
+              limit: int = 10,
+              offset: int = 0,
+              search: Optional[str] = ""):
+    posts = db.query(post_model.Post)\
+        .filter(post_model.Post.owner_id == user.id)\
+        .filter(post_model.Post.title.contains(search))\
+        .order_by(post_model.Post.id)\
+        .limit(limit)\
+        .offset(offset)\
+        .all()
     return posts
 
 
