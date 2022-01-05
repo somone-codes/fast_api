@@ -3,8 +3,8 @@ from models.user import User as userModel
 from utils.encrypt import validate
 from utils.oauth2 import create_token, validate_token
 from schemas.token import Token, TokenData as Token_Data_Schema
+from schemas.settings import settings
 
-from os import getenv
 
 from fastapi import status, HTTPException, Depends, APIRouter
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
@@ -14,7 +14,7 @@ from sqlalchemy.orm import Session
 
 router = APIRouter(tags=['Authentication'])
 
-TOKEN_URL = getenv("TOKEN_URL")
+TOKEN_URL = settings.TOKEN_URL
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl=TOKEN_URL)
 

@@ -1,12 +1,14 @@
+from schemas.settings import settings
+
 import datetime
-from os import getenv
 from typing import List, Optional, Any
+
 
 from jose import jwt
 
-SECRET_KEY = getenv("TOKEN_SECRET_KEY")
-ALGORITHM = getenv("TOKEN_ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(getenv("TOKEN_EXPIRE"))
+SECRET_KEY = settings.TOKEN_SECRET_KEY
+ALGORITHM = settings.TOKEN_ALGORITHM
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.TOKEN_EXPIRE
 
 
 def create_token(data: dict,

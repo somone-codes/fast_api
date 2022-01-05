@@ -1,9 +1,8 @@
-from os import getenv
-
+from schemas.settings import settings
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy import create_engine
 
-_SQLALCHEMY_DATABASE_URL = getenv("SQLALCHEMY_DATABASE_URL", "sqlite:///./sql_app.db")
+_SQLALCHEMY_DATABASE_URL = settings.SQLALCHEMY_DATABASE_URL
 
 engine = create_engine(_SQLALCHEMY_DATABASE_URL)
 
