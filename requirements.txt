@@ -4,3 +4,4 @@ sqlalchemy~=1.4.29
 pydantic~=1.9.0
 passlib[bcrypt]
 python-jose[cryptography]
+alembic
