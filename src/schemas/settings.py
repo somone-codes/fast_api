@@ -7,9 +7,10 @@ class Settings(BaseSettings):
     TOKEN_EXPIRE: int
     TOKEN_ALGORITHM: str
     TOKEN_URL: str
+    ALEMBIC_SQLALCHEMY_DATABASE_URL: str
 
     class Config:
-        env = ".env"
+        env_file = ".env"
 
 
 settings = Settings()
