@@ -1,7 +1,7 @@
 from .authentication import validate_current_user
 from database.alchemy_orm import get_db
 from models.user import User as User_Model
-from schemas.votes import Vote as Vote_Schema
+from schemas.vote import Vote as Vote_Schema
 from models.post import Post as Post_Model
 from models.vote import Vote as Vote_Model
 
@@ -18,7 +18,7 @@ def add_remove_vote(vote: Vote_Schema, db: Session = Depends(get_db), user: User
         # post trying to vote on doesn't exist
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No post found with id {vote.post_id}")
 
-    vote_query = db.query(Vote_Model).filter(vote.post_id == Vote_Model.post_id)
+    vote_query = db.query(Vote_Model).filter(vote.post_id == Vote_Model.post_id).filter(user.id == Vote_Model.user_id)
 
     if vote_query.first():
         if vote.vote:

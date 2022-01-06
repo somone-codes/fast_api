@@ -26,5 +26,21 @@ class Post(PostBase):
         orm_mode = True
 
 
+class PostWithVotes(BaseModel):
+    Post: Post
+    votes: int
+
+    class Config:
+        orm_mode = True
+
+
 class PostWithOwner(Post):
     owner: UserOut
+
+
+class PostWithVotesAndOwner(BaseModel):
+    Post: PostWithOwner
+    votes: int
+
+    class Config:
+        orm_mode = True
