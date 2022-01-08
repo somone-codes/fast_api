@@ -27,4 +27,4 @@ app.include_router(vote.router)
 
 @app.get("/")
 def index():
-    return "Hello!"
+    return "Welcome to FastAPI DEMO APP!!!"

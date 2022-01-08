@@ -1,0 +1,6 @@
+/venv*
+/tools/
+gunicorn.service
+nginx
+Procfile
+db/
