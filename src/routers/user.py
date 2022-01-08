@@ -27,8 +27,7 @@ def get_users(db: Session = Depends(get_db), user: user_model = Depends(validate
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=user_schema.UserOut)
-def create_users(user: user_schema.UserCreate, db: Session = Depends(get_db),
-                 logged_user: user_model = Depends(validate_current_user)):
+def create_users(user: user_schema.UserCreate, db: Session = Depends(get_db)):
     user.password = encrypt(user.password)
 
     new_user = user_model.User(**user.dict())
@@ -40,7 +39,7 @@ def create_users(user: user_schema.UserCreate, db: Session = Depends(get_db),
 
 
 @router.get('/{id}', response_model=user_schema.UserOut)
-def get_user(id: int, db: Session = Depends(get_db), user: user_model = Depends(validate_current_user)):
+def get_user(id: int, db: Session = Depends(get_db), logged_user: user_model = Depends(validate_current_user)):
     user = db.query(user_model.User).filter(user_model.User.id == id).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
