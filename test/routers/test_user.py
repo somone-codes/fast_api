@@ -1,4 +1,3 @@
-from ..database import client, session  # This is required as we are using client fixture which uses session
 from src.fast_api import app
 from src.schemas.user import UserOut
 

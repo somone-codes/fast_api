@@ -1,21 +1,8 @@
 from src.schemas.token import Token
-from ..database import client, session  # This is required as we are using client fixture which uses session
 from schemas.settings import settings
 
 from fastapi.testclient import TestClient
-import pytest
 from jose import jwt
-
-
-@pytest.fixture()
-def create_user(client: TestClient):
-    user = {"email": "test_user@mail.com", "password": "testpass"}
-    response = client.post("/users/", json=user)
-    assert response.status_code == 201
-    new_user = response.json()
-    new_user['password'] = user['password']
-    return new_user
-
 
 
 def test_login(client: TestClient, create_user):
